@@ -1,0 +1,22 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/mcp.schema.json",
+  "mcpServers": {
+    "knowledge-catalog-local": {
+      "type": "stdio",
+      "command": "uv",
+      "args": [
+        "run",
+        "--no-dev",
+        "--project",
+        "${PLUGIN_ROOT}/agent-plugin",
+        "--locked",
+        "knowledge-catalog-agent-plugin"
+      ],
+      "env": {
+        "UV_PROJECT_ENVIRONMENT": "${PLUGIN_DATA}/venv",
+        "KNOWLEDGE_CATALOG_STATE": "${PLUGIN_DATA}/knowledge-catalog.duckdb"
+      },
+      "cwd": "${PLUGIN_ROOT}"
+    }
+  }
+}

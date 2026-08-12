@@ -1,0 +1,33 @@
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[project]
+name = "knowledge-catalog-agent-plugin"
+version = "0.1.0"
+description = "Portable Knowledge Catalog and DuckDB workflow-memory MCP server"
+requires-python = ">=3.11"
+license = "Apache-2.0"
+dependencies = [
+  "duckdb>=1.5,<1.6",
+  "google-cloud-dataplex>=2.20,<3",
+  "mcp>=1.28,<2",
+  "pytz>=2025.2", # DuckDB needs pytz when materializing TIMESTAMPTZ values.
+]
+
+[project.scripts]
+knowledge-catalog-agent-plugin = "knowledge_catalog_plugin.server:main"
+
+[dependency-groups]
+dev = [
+  "jsonschema>=4.25,<5",
+  "pytest>=9,<10",
+  "pyyaml>=6,<7",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/knowledge_catalog_plugin"]

@@ -1,0 +1,19 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "knowledge-catalog",
+  "version": "0.1.0",
+  "description": "Discover Google Cloud Knowledge Catalog entries and keep local agent workflow state and curated memory in DuckDB.",
+  "author": {
+    "name": "GoogleCloudPlatform contributors"
+  },
+  "homepage": "https://github.com/GoogleCloudPlatform/knowledge-catalog",
+  "repository": "https://github.com/adeze/knowledge-catalog",
+  "license": "Apache-2.0",
+  "keywords": [
+    "knowledge-catalog",
+    "dataplex",
+    "duckdb",
+    "agent-memory",
+    "workflow"
+  ]
+}
