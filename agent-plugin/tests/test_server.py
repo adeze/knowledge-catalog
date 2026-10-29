@@ -84,6 +84,7 @@ def test_stdio_mcp_handshake_lists_governed_tools(tmp_path) -> None:
             tools = {tool.name for tool in (await session.list_tools()).tools}
         assert {
             "knowledge_catalog_search",
+            "knowledge_catalog_lookup_context",
             "memory_remember",
             "memory_recall",
             "workflow_create",

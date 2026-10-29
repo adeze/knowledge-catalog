@@ -21,7 +21,7 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
-    "@google/adk": "^1.6.0",
+    "@google/adk": "^2.4.0",
     "@modelcontextprotocol/sdk": "^1.32.2",
     "cac": "^7.1.0",
     "kcmd": "file:../mdcode",
@@ -30,8 +30,8 @@
     "zod": "^4.6.7"
   },
   "devDependencies": {
-    "@google/adk-devtools": "^1.6.0",
-    "@modelcontextprotocol/inspector": "^0.22.0",
+    "@google/adk-devtools": "^2.4.0",
+    "@modelcontextprotocol/inspector": "^2.13.0",
     "@types/node": "^26.6.6",
     "bun": "^1.4.4",
     "bun-types": "^1.4.4",

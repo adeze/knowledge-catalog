@@ -6,6 +6,8 @@
       "command": "uv",
       "args": [
         "run",
+        "--python",
+        "3.13",
         "--no-dev",
         "--project",
         "${PLUGIN_ROOT}/agent-plugin",
