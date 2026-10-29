@@ -1,0 +1,82 @@
+{
+  "entries": [
+    {
+      "name": "projects/sqlgen-testing/locations/us/entryGroups/semantic/entries/sales",
+      "entryType": "projects/dataplex-types/locations/global/entryTypes/semantic-model",
+      "entrySource": {
+        "displayName": "sales"
+      },
+      "aspects": {
+        "dataplex-types.global.semantic-model": {
+          "aspectType": "projects/dataplex-types/locations/global/aspectTypes/semantic-model",
+          "data": {
+            "deploymentTargets": [
+              "bigquery.googleapis.com/projects/demo/datasets/sales/propertyGraphs/sales_graph"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "name": "projects/sqlgen-testing/locations/us/entryGroups/semantic/entries/sales.entities.orders",
+      "entryType": "projects/dataplex-types/locations/global/entryTypes/semantic-entity",
+      "parentEntry": "projects/sqlgen-testing/locations/us/entryGroups/semantic/entries/sales",
+      "entrySource": {
+        "displayName": "orders"
+      },
+      "aspects": {
+        "dataplex-types.global.semantic-entity": {
+          "aspectType": "projects/dataplex-types/locations/global/aspectTypes/semantic-entity",
+          "data": {
+            "source": {
+              "resources": [
+                "bigquery.googleapis.com/projects/demo/datasets/sales/tables/orders"
+              ]
+            }
+          }
+        },
+        "dataplex-types.global.schema": {
+          "aspectType": "projects/dataplex-types/locations/global/aspectTypes/schema",
+          "data": {
+            "fields": [
+              {
+                "name": "o_orderkey",
+                "dataType": "STRING",
+                "metadataType": "OTHER"
+              },
+              {
+                "name": "o_totalprice",
+                "dataType": "STRING",
+                "metadataType": "OTHER"
+              }
+            ],
+            "primaryKey": {
+              "fields": [
+                "o_orderkey"
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "projects/sqlgen-testing/locations/us/entryGroups/semantic/entries/sales.metrics.total_revenue",
+      "entryType": "projects/dataplex-types/locations/global/entryTypes/semantic-metric",
+      "parentEntry": "projects/sqlgen-testing/locations/us/entryGroups/semantic/entries/sales",
+      "entrySource": {
+        "displayName": "total_revenue"
+      },
+      "aspects": {
+        "dataplex-types.global.semantic-metric": {
+          "aspectType": "projects/dataplex-types/locations/global/aspectTypes/semantic-metric",
+          "data": {
+            "entity": "orders",
+            "dataType": "STRING"
+          }
+        }
+      }
+    }
+  ],
+  "entryLinks": [],
+  "warnings": []
+}

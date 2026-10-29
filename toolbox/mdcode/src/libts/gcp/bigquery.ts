@@ -30,6 +30,22 @@ interface TableList {
   nextPageToken?: string;
 }
 
+export interface QueryResponse {
+  jobComplete?: boolean;
+  jobReference?: { projectId?: string; jobId?: string; location?: string };
+  errors?: { reason?: string; message: string }[];
+  [key: string]: any;
+}
+
+export interface Job {
+  status?: {
+    state?: string;
+    errorResult?: { reason?: string; message: string };
+    errors?: { reason?: string; message: string }[];
+  };
+  [key: string]: any;
+}
+
 
 export class BigQueryClient extends api.ApiClient {
 
@@ -42,6 +58,17 @@ export class BigQueryClient extends api.ApiClient {
     const params: Record<string, any> = { datasetView: 'METADATA' };
 
     return await this._get(name, params);
+  }
+
+  // Fetches a single table's metadata. Used as a cheap existence/access probe
+  // before deploy: a 200 means the table is reachable, a 404 that it does not
+  // exist, a 403 that the caller cannot see it. `selectedFields` trims the
+  // response to the reference alone, since only the status is consulted.
+  async getTable(project: string, dataset: string, table: string): Promise<api.ApiResult<Table>> {
+    const name = `projects/${project}/datasets/${dataset}/tables/${table}`;
+    const params: Record<string, any> = { selectedFields: 'tableReference' };
+
+    return await this._get<Table>(name, params);
   }
 
   async *listTables(project: string, dataset: string): AsyncGenerator<Table> {
@@ -66,5 +93,64 @@ export class BigQueryClient extends api.ApiClient {
 
       pageToken = res.result?.nextPageToken;
     } while (pageToken);
+  }
+
+  // Executes a SQL statement (including DDL) synchronously via jobs.query.
+  // When `location` is set it pins the job's processing location so it agrees
+  // with getQueryResults/getJob; otherwise BigQuery infers it from the
+  // referenced tables. With `dryRun` the statement is validated -- name
+  // resolution, table existence and access -- but not executed, so it serves as
+  // a cheap pre-flight probe over any reference form BigQuery can resolve.
+  //
+  // `namedParameterTypes` maps a `@name` reference to its BigQuery type code
+  // (`INT64`, `STRING`, ...) and is only useful with `dryRun`: a dry run
+  // resolves an unbound `@name` on its own, so the types are not required to
+  // make one pass -- supplying them is what makes BigQuery type-check each
+  // parameter against the column it is used with. The values sent are empty
+  // (`parameterValue: {}`, an unset value), because a dry run never evaluates
+  // them.
+  async query(project: string, sql: string, location?: string, dryRun?: boolean, namedParameterTypes?: Record<string, string>): Promise<api.ApiResult<QueryResponse>> {
+    const name = `projects/${project}/queries`;
+    const body: Record<string, any> = { query: sql, useLegacySql: false };
+    if (location) {
+      body.location = location;
+    }
+    if (dryRun) {
+      body.dryRun = true;
+    }
+    const parameterNames = Object.keys(namedParameterTypes ?? {});
+    if (parameterNames.length) {
+      body.parameterMode = 'NAMED';
+      body.queryParameters = parameterNames.map(name => ({
+        name,
+        parameterType: { type: namedParameterTypes![name] },
+        parameterValue: {},
+      }));
+    }
+    return await this._post<QueryResponse>(name, body);
+  }
+
+  // Fetches the status/results of a running query job. Used to poll until the
+  // job reports `jobComplete`, since jobs.query can return before a slow DDL
+  // statement has finished executing.
+  async getQueryResults(project: string, jobId: string, location?: string): Promise<api.ApiResult<QueryResponse>> {
+    const name = `projects/${project}/queries/${jobId}`;
+    const params: Record<string, any> = { maxResults: 0, timeoutMs: 10000 };
+    if (location) {
+      params.location = location;
+    }
+    return await this._get<QueryResponse>(name, params);
+  }
+
+  // Fetches a job's full status. status.errorResult is the definitive fatal
+  // error for a completed job; the query response's errors[] also includes
+  // non-fatal warnings, so it cannot decide success on its own.
+  async getJob(project: string, jobId: string, location?: string): Promise<api.ApiResult<Job>> {
+    const name = `projects/${project}/jobs/${jobId}`;
+    const params: Record<string, any> = {};
+    if (location) {
+      params.location = location;
+    }
+    return await this._get<Job>(name, params);
   }
 }
