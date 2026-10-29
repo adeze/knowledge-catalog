@@ -6,7 +6,7 @@ The demonstration shows valid SQL producing the wrong answer because a business 
 
 ## Implemented locally
 
-The plugin now supports discovery followed by read-only `knowledge_catalog_lookup_context`. It requests YAML context for 1–10 full entry names, using ADC and a soft character budget. The discovery skill instructs agents to retrieve context before reasoning about definitions, schemas, or joins, and to preserve citations and uncertainty. An empty response can indicate insufficient permissions.
+The plugin now supports discovery followed by read-only `knowledge_catalog_lookup_context`. It requests YAML context for 1–10 full entry names in one location, using ADC and a soft character budget. The request location follows those entry names. The discovery skill instructs agents to retrieve context before reasoning about definitions, schemas, or joins, and to preserve citations and uncertainty. An empty response can indicate insufficient permissions.
 
 The implementation follows the [LookupContext REST contract](https://docs.cloud.google.com/knowledge-catalog/docs/reference/rest/v1/projects.locations/lookupContext), including `options.context_budget`, and the installed Dataplex SDK. See [context retrieval](https://docs.cloud.google.com/knowledge-catalog/docs/retrieve-data-context) for supported metadata and access behavior.
 

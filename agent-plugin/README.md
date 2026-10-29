@@ -22,7 +22,7 @@ Knowledge Catalog search requires Application Default Credentials, `GOOGLE_CLOUD
 
 The portable launcher selects Python 3.13 to use supported DuckDB wheels; Python 3.15 attempted a source build that failed against the current macOS SDK.
 
-After `knowledge_catalog_search`, use `knowledge_catalog_lookup_context` with up to ten full entry names. It returns YAML context using the same ADC identity. Catalog and source-resource permissions still apply; an empty response may reflect insufficient access. Its default `context_budget=12000` is a soft character budget. This tool does not query table rows, publish metadata, or validate business definitions. See [self-learning enrichment](../docs/self-learning-enrichment.md).
+After `knowledge_catalog_search`, use `knowledge_catalog_lookup_context` with up to ten full entry names in the same location. The request location is derived from those names; mixed-location batches are rejected. It returns YAML context using the same ADC identity. Catalog and source-resource permissions still apply; an empty response may reflect insufficient access. Its default `context_budget=12000` is a soft character budget. This tool does not query table rows, publish metadata, or validate business definitions. See [self-learning enrichment](../docs/self-learning-enrichment.md).
 
 ## DuckDB extensions
 

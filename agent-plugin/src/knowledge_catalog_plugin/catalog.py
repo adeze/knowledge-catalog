@@ -89,6 +89,10 @@ def lookup_context(
         for resource in resources
     ):
         raise ValueError("resources must be full Knowledge Catalog entry names")
+    locations = {resource.split("/")[3] for resource in resources}
+    if len(locations) != 1:
+        raise ValueError("resources must belong to the same location")
+    location = locations.pop()
     if context_budget < 1:
         raise ValueError("context_budget must be positive")
     consumer_project = (project_id or os.getenv("GOOGLE_CLOUD_PROJECT", "")).strip()
@@ -100,7 +104,7 @@ def lookup_context(
         )
         response = client.lookup_context(
             request={
-                "name": f"projects/{consumer_project}/locations/global",
+                "name": f"projects/{consumer_project}/locations/{location}",
                 "resources": resources,
                 "options": {"format": "yaml", "context_budget": str(context_budget)},
             }

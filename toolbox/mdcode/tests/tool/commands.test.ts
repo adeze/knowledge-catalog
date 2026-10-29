@@ -67,7 +67,7 @@ const withoutDeployments = (model: string) =>
 
 beforeEach(() => {
   cwd = process.cwd();
-  dir = fs.mkdtempSync(path.join(os.tmpdir(), 'kcmd-commands-'));
+  dir = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'kcmd-commands-')));
   process.chdir(dir);
   savedEnv = {...process.env};
   delete process.env.KC_V2_ASPECTS;

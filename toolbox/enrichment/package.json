@@ -38,6 +38,7 @@
     "typescript": "^6.0.3"
   },
   "overrides": {
+    "@azure/msal-node": "^7.1.2",
     "@opentelemetry/core": "^2.9.0",
     "@opentelemetry/exporter-logs-otlp-http": "^0.220.0",
     "@opentelemetry/exporter-metrics-otlp-http": "^0.220.0",

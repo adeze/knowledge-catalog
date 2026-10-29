@@ -3,7 +3,8 @@
 // writeModelDocument. These are the sink `pull` writes reconstructed models to;
 // the push-side discovery (modelDocuments) is exercised via the deploy tests.
 
-import {afterEach, beforeEach, describe, expect, test} from 'bun:test';
+import {afterEach, beforeEach, describe, expect, mock, spyOn, test} from 'bun:test';
+import {createFsFromVolume, Volume} from 'memfs';
 import * as fs from 'node:fs';
 import * as os from 'node:os';
 import * as path from 'node:path';
@@ -19,6 +20,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
+  mock.restore();
   fs.rmSync(root, {recursive: true, force: true});
 });
 
@@ -440,8 +442,17 @@ describe('SemanticModelLayout profile name rules', () => {
   test('two profile files whose names differ only in case are an error', async () => {
     writeToGroup('retail.yaml', MODEL);
     writeToGroup('retail.profile.prod.yaml', 'name: prod\n');
-    writeToGroup('retail.profile.PROD.yaml', 'name: PROD\n');
     const l = await layout('eg');
+    // Preserve both filenames on hosts whose filesystem merges case-only names.
+    const dir = path.join(catalogPath, 'EntryGroups', 'eg');
+    const disk = createFsFromVolume(Volume.fromJSON({
+      [path.join(dir, 'retail.yaml')]: MODEL,
+      [path.join(dir, 'retail.profile.prod.yaml')]: 'name: prod\n',
+      [path.join(dir, 'retail.profile.PROD.yaml')]: 'name: PROD\n',
+    }));
+    spyOn(fs, 'readdirSync').mockImplementation(disk.readdirSync as any);
+    spyOn(fs, 'readFileSync').mockImplementation(disk.readFileSync as any);
+    spyOn(fs, 'statSync').mockImplementation(disk.statSync as any);
     expect(() => l.profileDocuments('retail')).toThrow(/name the same profile/);
   });
 

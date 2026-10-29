@@ -93,7 +93,8 @@ export class SemanticModelLayout implements CatalogLayout {
       nodir: true,
     });
 
-    for (const localPath of matches) {
+    // Glob traversal order varies by filesystem; process documents by path.
+    for (const localPath of matches.sort()) {
       if (SIDECAR_SUFFIXES.some(s => localPath.endsWith(s))) {
         continue;
       }

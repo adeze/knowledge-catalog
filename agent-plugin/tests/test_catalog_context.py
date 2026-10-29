@@ -19,7 +19,7 @@ def test_lookup_context_request_and_empty_result(monkeypatch, tmp_path):
         def lookup_context(self, request):
             # Construct the SDK request too, so mocks cannot hide invalid fields.
             parsed = catalog.dataplex_v1.LookupContextRequest(**request)
-            assert parsed.name == "projects/consumer/locations/global"
+            assert parsed.name == "projects/consumer/locations/us"
             assert list(parsed.resources) == [ENTRY]
             assert dict(parsed.options) == {"format": "yaml", "context_budget": "12000"}
             return SimpleNamespace(context=next(responses))
@@ -41,6 +41,8 @@ def test_lookup_context_rejects_invalid_input_before_client_creation(monkeypatch
     for resources, budget in [([], 1), ([ENTRY] * 11, 1), (["table"], 1), ([ENTRY], 0)]:
         with pytest.raises(ValueError):
             catalog.lookup_context(resources, "consumer", budget)
+    with pytest.raises(ValueError, match="same location"):
+        catalog.lookup_context([ENTRY, ENTRY.replace("/locations/us/", "/locations/eu/")], "consumer")
     monkeypatch.delenv("GOOGLE_CLOUD_PROJECT", raising=False)
     with pytest.raises(ValueError, match="project_id is required"):
         catalog.lookup_context([ENTRY])

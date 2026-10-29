@@ -113,7 +113,7 @@ function writeInlineOnlyWorkspace(): void {
 
 beforeEach(() => {
   cwd = process.cwd();
-  dir = fs.mkdtempSync(path.join(os.tmpdir(), 'kcmd-profiles-'));
+  dir = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'kcmd-profiles-')));
   process.chdir(dir);
   logs = [];
   errs = [];
